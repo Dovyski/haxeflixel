@@ -15,6 +15,7 @@ import flixel.system.debug.Window;
 import flixel.system.debug.interaction.tools.Eraser;
 import flixel.system.debug.interaction.tools.Mover;
 import flixel.system.debug.interaction.tools.Pointer;
+import flixel.system.debug.interaction.tools.Tile;
 import flixel.system.debug.interaction.tools.Tool;
 import flixel.system.ui.FlxSystemButton;
 import flixel.util.FlxSpriteUtil;
@@ -74,6 +75,7 @@ class Interaction extends Window
 		addTool(new Pointer());
 		addTool(new Mover());
 		addTool(new Eraser());
+		addTool(new Tile());
 		
 		FlxG.signals.postDraw.add(postDraw);
 		FlxG.debugger.visibilityChanged.add(handleDebuggerVisibilityChanged);

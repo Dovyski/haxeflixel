@@ -134,6 +134,7 @@ class TilePropertiesWindow extends Window
 	private var _tileType:Int;
 	private var _tileTool:Tile;
 	private var _tileHightligh:Sprite;
+	private var _tileSelected:Sprite;
 	private var _tilemap:FlxTilemap;
 	private var _tilemapGraphic:Sprite;
 	private var _tilemapBitmap:Bitmap;
@@ -165,14 +166,30 @@ class TilePropertiesWindow extends Window
 		_tileHightligh.graphics.drawRect(0, 0, 16, 16);
 		_tileHightligh.width = 16;
 		_tileHightligh.height = 16;
+		_tileHightligh.x = 0;
+		_tileHightligh.y = 0;
+		_tileHightligh.visible = false;
+		
+		_tileSelected = new Sprite();
+		_tileSelected.graphics.lineStyle(1, 0xffff00);
+		_tileSelected.graphics.drawRect(0, 0, 16, 16);
+		_tileSelected.width = 16;
+		_tileSelected.height = 16;
+		_tileSelected.x = 0;
+		_tileSelected.y = 20;
+		
 		_graphicTile = new FlxPoint();
 		
+		addChild(_tileSelected);
 		addChild(_tileHightligh);
 		
 		reposition(2, 150);
 		
 		_tilemapGraphic.addEventListener(MouseEvent.MOUSE_MOVE, handleMouseOverGraphic);
 		_tilemapGraphic.addEventListener(MouseEvent.MOUSE_UP, handleClickGraphic);
+		_tilemapGraphic.addEventListener(MouseEvent.MOUSE_OUT, handleMouseOverGraphic);
+		
+		visible = false;
 	}
 	
 	public function refresh(Tilemap:FlxTilemap):Void
@@ -182,7 +199,8 @@ class TilePropertiesWindow extends Window
 		if (_tilemap != null)
 		{
 			_tilemapBitmap.bitmapData = _tilemap.frames.parent.bitmap;
-			resize(_tilemapBitmap.bitmapData.width * 2, _tilemapBitmap.bitmapData.height * 2 + _tilemapGraphic.y);
+			resize(_tilemapBitmap.bitmapData.width * 2 + 10, _tilemapBitmap.bitmapData.height * 2 + _tilemapGraphic.y + 10);
+			visible = true;
 		}
 	}
 	
@@ -193,13 +211,21 @@ class TilePropertiesWindow extends Window
 
 	private function handleMouseOverGraphic(Event:MouseEvent):Void
 	{		
-		_graphicTile.x = Math.floor(Event.localX / 8) * 8;
-		_graphicTile.y = Math.floor(Event.localY / 8) * 8;
-		
-		_tileHightligh.x = _graphicTile.x * 2;
-		_tileHightligh.y = _graphicTile.y * 2;
-		
-		_tileHightligh.y += 20;
+		if (Event.type == MouseEvent.MOUSE_MOVE)
+		{
+			_graphicTile.x = Math.floor(Event.localX / 8) * 8;
+			_graphicTile.y = Math.floor(Event.localY / 8) * 8;
+			
+			_tileHightligh.x = _graphicTile.x * 2;
+			_tileHightligh.y = _graphicTile.y * 2;
+			
+			_tileHightligh.y += 20;
+			_tileHightligh.visible = true;
+		}
+		else if (Event.type == MouseEvent.MOUSE_OUT)
+		{
+			_tileHightligh.visible = false;
+		}
 	}
 	
 	private function handleClickGraphic(Event:MouseEvent):Void
@@ -209,9 +235,8 @@ class TilePropertiesWindow extends Window
 		var column:Int = Std.int(_graphicTile.x / 8);
 		var index = row * tilesPerRow + column;
 		
-		FlxG.log.add("Click: " + _graphicTile.x + "," + _graphicTile.y + ", " + tilesPerRow);
-		FlxG.log.add("row: " + row + ", col:" + column + ", idx: " + index);
-		
 		_tileType = index;
+		_tileSelected.x = _tileHightligh.x;
+		_tileSelected.y = _tileHightligh.y;
 	}
 }

@@ -15,6 +15,7 @@ import flixel.system.debug.Window;
 import flixel.system.debug.interaction.tools.Eraser;
 import flixel.system.debug.interaction.tools.Mover;
 import flixel.system.debug.interaction.tools.Pointer;
+import flixel.system.debug.interaction.tools.Tile;
 import flixel.system.debug.interaction.tools.Tool;
 import flixel.system.ui.FlxSystemButton;
 import flixel.util.FlxDestroyUtil;
@@ -31,13 +32,14 @@ class Interaction extends Window
 {
 	public var activeTool(default, null):Tool;
 	public var selectedItems(default, null):FlxTypedGroup<FlxObject> = new FlxTypedGroup();
+	public var container(default, null):Sprite;
 	
 	public var flixelPointer:FlxPoint = new FlxPoint();
 	public var pointerJustPressed:Bool = false;
 	public var pointerJustReleased:Bool = false;
 	public var pointerPressed:Bool = false;
 	
-	private var _container:Sprite;
+	
 	private var _customCursor:Sprite;
 	private var _tools:Array<Tool> = [];
 	private var _turn:Int = 2;
@@ -48,20 +50,21 @@ class Interaction extends Window
 	private var _debuggerInteraction:Bool = false;
 	private var _flixelPointer:FlxPointer = new FlxPointer();
 	
-	public function new(container:Sprite)
+	public function new(containerElement:Sprite)
 	{
 		super("Tools", new GraphicInteractive(0, 0), 40, 25, false);
 		reposition(2, 100);
-		_container = container;
+		container = containerElement;
 		
 		_customCursor = new Sprite();
 		_customCursor.mouseEnabled = false;
-		_container.addChild(_customCursor);
+		container.addChild(_customCursor);
 		
 		// Add all built-in tools
 		addTool(new Pointer());
 		addTool(new Mover());
 		addTool(new Eraser());
+		addTool(new Tile());
 		
 		FlxG.signals.postDraw.add(postDraw);
 		FlxG.debugger.visibilityChanged.add(handleDebuggerVisibilityChanged);
@@ -72,8 +75,8 @@ class Interaction extends Window
 		FlxG.stage.addEventListener(KeyboardEvent.KEY_DOWN, handleKeyEvent);
 		FlxG.stage.addEventListener(KeyboardEvent.KEY_UP, handleKeyEvent);
 		
-		_container.addEventListener(MouseEvent.MOUSE_OVER, handleMouseInDebugger);
-		_container.addEventListener(MouseEvent.MOUSE_OUT, handleMouseInDebugger);
+		container.addEventListener(MouseEvent.MOUSE_OVER, handleMouseInDebugger);
+		container.addEventListener(MouseEvent.MOUSE_OUT, handleMouseInDebugger);
 	}
 	
 	private function handleDebuggerVisibilityChanged():Void
@@ -185,10 +188,10 @@ class Interaction extends Window
 		FlxG.stage.removeEventListener(KeyboardEvent.KEY_DOWN, handleKeyEvent);
 		FlxG.stage.removeEventListener(KeyboardEvent.KEY_UP, handleKeyEvent);
 		
-		if (_container != null)
+		if (container != null)
 		{
-			_container.removeEventListener(MouseEvent.MOUSE_OVER, handleMouseInDebugger);
-			_container.removeEventListener(MouseEvent.MOUSE_OUT, handleMouseInDebugger);
+			container.removeEventListener(MouseEvent.MOUSE_OVER, handleMouseInDebugger);
+			container.removeEventListener(MouseEvent.MOUSE_OUT, handleMouseInDebugger);
 		}
 		
 		if (_customCursor != null)

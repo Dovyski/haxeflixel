@@ -242,7 +242,7 @@ class Interaction extends Window
 		drawItemsSelection();
 	}
 	
-	private function getDebugGraphics():Graphics
+	public function getDebugGraphics():Graphics
 	{
 		if (FlxG.renderBlit)
 		{

@@ -2,6 +2,7 @@ package flixel.system.debug.interaction.tools;
 
 import flash.display.Bitmap;
 import flash.display.BitmapData;
+import flash.display.Graphics;
 import flash.events.MouseEvent;
 import flash.ui.Keyboard;
 import flixel.FlxSprite;
@@ -9,6 +10,7 @@ import flixel.group.FlxGroup;
 import flixel.math.FlxPoint;
 import flixel.system.debug.Window;
 import flixel.tile.FlxTilemap;
+import flixel.util.FlxSpriteUtil;
 import openfl.display.Sprite;
 
 @:bitmap("assets/images/debugger/buttons/tile.png") 
@@ -87,6 +89,44 @@ class Tile extends Tool
 			return;
 		
 		_tileHightligh.drawDebug();
+		drawTileLinesAroundCursor();
+	}
+	
+	private function drawTileLinesAroundCursor():Void
+	{
+		var tile:FlxSprite = _tileHightligh.clone(); // TODO: remove the clone call!
+		var amount:Int = 7;
+		var amountHalf:Int = Std.int(amount / 2);
+		
+		for (row in -amountHalf...amountHalf + 1)
+		{
+			for (col in -amountHalf...amountHalf + 1)
+			{
+				tile.x = _tileHightligh.x + _tileHightligh.width * col;
+				tile.y = _tileHightligh.y + _tileHightligh.height * row;
+				
+				drawTileOutline(tile);
+			}
+		}
+	}
+	
+	// TODO: replace FlxSprite with rect probably
+	private function drawTileOutline(sprite:FlxSprite):Void
+	{
+		var gfx:Graphics = _brain.getDebugGraphics();
+		
+		if (gfx == null)
+			return;
+		
+		// Render a red rectangle centered at the selected item
+		gfx.lineStyle(0.7, 0x990000, 0.15);
+		gfx.drawRect(sprite.x - FlxG.camera.scroll.x,
+			sprite.y - FlxG.camera.scroll.y,
+			sprite.width * 1.0, sprite.height * 1.0);
+		
+		// Draw the debug info to the main camera buffer.
+		if (FlxG.renderBlit)
+			FlxG.camera.buffer.draw(FlxSpriteUtil.flashGfxSprite);
 	}
 	
 	private function findExistingTilemaps(members:Array<FlxBasic>, tiles:FlxGroup):FlxTilemap

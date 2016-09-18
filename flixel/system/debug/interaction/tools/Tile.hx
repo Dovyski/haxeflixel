@@ -4,11 +4,13 @@ import flash.display.Bitmap;
 import flash.display.BitmapData;
 import flash.display.Graphics;
 import flash.events.MouseEvent;
+import flash.text.TextField;
 import flash.ui.Keyboard;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup;
 import flixel.math.FlxPoint;
 import flixel.system.debug.Window;
+import flixel.system.ui.FlxSystemButton;
 import flixel.tile.FlxTilemap;
 import flixel.util.FlxSpriteUtil;
 import openfl.display.Sprite;
@@ -25,8 +27,9 @@ class GraphicTileTool extends BitmapData {}
  */
 class Tile extends Tool
 {		
+	public var tilemaps(default, null):FlxTypedGroup<FlxTilemap> = new FlxTypedGroup();
+	
 	private var _tileHightligh:FlxSprite;
-	private var _tilemaps:FlxGroup;
 	private var _activeTilemap:FlxTilemap;
 	private var _properties:TilePropertiesWindow;
 	
@@ -38,7 +41,6 @@ class Tile extends Tool
 		setButton(GraphicTileTool);
 		setCursor(new GraphicTileTool(0, 0));
 		
-		_tilemaps = new FlxGroup();
 		_tileHightligh = new FlxSprite(); // TODO: replace this with a Sprite.
 		_properties = new TilePropertiesWindow(this);
 
@@ -52,10 +54,10 @@ class Tile extends Tool
 		super.activate();
 		
 		// Open room for all existing tilemaps
-		_tilemaps.clear();
-		findExistingTilemaps(FlxG.state.members, _tilemaps);
+		tilemaps.clear();
+		findExistingTilemaps(FlxG.state.members, tilemaps);
 		
-		_activeTilemap = cast _tilemaps.getFirstAlive();
+		_activeTilemap = cast tilemaps.getFirstAlive();
 		
 		_tileHightligh.width = _activeTilemap.width / _activeTilemap.widthInTiles;
 		_tileHightligh.height = _activeTilemap.height / _activeTilemap.heightInTiles;
@@ -129,7 +131,7 @@ class Tile extends Tool
 			FlxG.camera.buffer.draw(FlxSpriteUtil.flashGfxSprite);
 	}
 	
-	private function findExistingTilemaps(members:Array<FlxBasic>, tiles:FlxGroup):FlxTilemap
+	private function findExistingTilemaps(members:Array<FlxBasic>, tiles:FlxTypedGroup<FlxTilemap>):FlxTilemap
 	{
 		var i:Int = 0;
 		var size:Int = members.length;
@@ -171,18 +173,22 @@ class TilePropertiesWindow extends Window
 	private var _tilemapGraphic:Sprite;
 	private var _tilemapBitmap:Bitmap;
 	private var _graphicTile:FlxPoint;
+	private var _tilemapSelector:TilemapSelector;
 	
 	private function initLayout():Void
 	{
 		_tilemapGraphic = new Sprite();
 		_tilemapBitmap = new Bitmap();
+		_tilemapSelector = new TilemapSelector(_tileTool);
 		
 		_tilemapGraphic.addChild(_tilemapBitmap);
 		
-		_tilemapGraphic.y = 20;
+		_tilemapSelector.y = 20;
+		_tilemapGraphic.y = _tilemapSelector.y + 20;
 		_tilemapGraphic.scaleX = 2; // TODO: get values from Flixel
 		_tilemapGraphic.scaleY = 2; // TODO: get values from Flixel
 		
+		addChild(_tilemapSelector);
 		addChild(_tilemapGraphic);
 	}
 	
@@ -196,8 +202,8 @@ class TilePropertiesWindow extends Window
 		_tileHightligh = new Sprite();
 		_tileHightligh.graphics.lineStyle(1, 0xff0000);
 		_tileHightligh.graphics.drawRect(0, 0, 16, 16);
-		_tileHightligh.width = 16;
-		_tileHightligh.height = 16;
+		_tileHightligh.width = 16; // TODO: get this value dynamically
+		_tileHightligh.height = 16; // TODO: get this value dynamically
 		_tileHightligh.x = 0;
 		_tileHightligh.y = 0;
 		_tileHightligh.visible = false;
@@ -205,10 +211,10 @@ class TilePropertiesWindow extends Window
 		_tileSelected = new Sprite();
 		_tileSelected.graphics.lineStyle(1, 0xffff00);
 		_tileSelected.graphics.drawRect(0, 0, 16, 16);
-		_tileSelected.width = 16;
-		_tileSelected.height = 16;
-		_tileSelected.x = 0;
-		_tileSelected.y = 20;
+		_tileSelected.width = 16; // TODO: get this value dynamically
+		_tileSelected.height = 16; // TODO: get this value dynamically
+		_tileSelected.x = 0; // TODO: get this value dynamically
+		_tileSelected.y = 35; // TODO: get this value dynamically
 		
 		_graphicTile = new FlxPoint();
 		
@@ -270,5 +276,47 @@ class TilePropertiesWindow extends Window
 		_tileType = index;
 		_tileSelected.x = _tileHightligh.x;
 		_tileSelected.y = _tileHightligh.y;
+	}
+}
+
+class TilemapSelector extends Sprite
+{
+	private var _prev:FlxSystemButton;
+	private var _next:FlxSystemButton;
+	private var _text:TextField = new TextField();
+	private var _tileTool:Tile;
+		
+	public function new(tileTool:Tile) 
+	{
+		super();
+		_tileTool = tileTool;
+		
+		_prev = new FlxSystemButton(Type.createInstance(GraphicTileTool, [0, 0]), prev);
+		_next = new FlxSystemButton(Type.createInstance(GraphicTileTool, [0, 0]), next);
+		
+		_prev.x = 0;
+		_text.x = _prev.x + _prev.width + 2;
+		_next.x = _text.x + _text.width + 2;
+		
+		addChild(_prev);
+		addChild(_text);
+		addChild(_next);
+		
+		refresh();
+	}
+	
+	public function refresh():Void
+	{
+		_text.text = "Text";
+	}
+	
+	private function next():Void
+	{
+		FlxG.log.add("Next");
+	}
+	
+	private function prev():Void
+	{
+		FlxG.log.add("Prev");
 	}
 }

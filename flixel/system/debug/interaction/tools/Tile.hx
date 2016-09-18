@@ -1,5 +1,6 @@
 package flixel.system.debug.interaction.tools;
 
+import flash.Vector;
 import flash.display.Bitmap;
 import flash.display.BitmapData;
 import flash.display.Graphics;
@@ -27,10 +28,10 @@ class GraphicTileTool extends BitmapData {}
  */
 class Tile extends Tool
 {		
-	public var tilemaps(default, null):FlxTypedGroup<FlxTilemap> = new FlxTypedGroup();
+	public var tilemaps(default, null):Vector<FlxTilemap> = new Vector<FlxTilemap>();
+	public var activeTilemap(default, set):Int;
 	
 	private var _tileHightligh:FlxSprite;
-	private var _activeTilemap:FlxTilemap;
 	private var _properties:TilePropertiesWindow;
 	
 	override public function init(brain:Interaction):Tool 
@@ -53,17 +54,24 @@ class Tile extends Tool
 	{
 		super.activate();
 		
-		// Open room for all existing tilemaps
-		tilemaps.clear();
+		tilemaps.length = 0;
 		findExistingTilemaps(FlxG.state.members, tilemaps);
 		
-		_activeTilemap = cast tilemaps.getFirstAlive();
-		
-		_tileHightligh.width = _activeTilemap.width / _activeTilemap.widthInTiles;
-		_tileHightligh.height = _activeTilemap.height / _activeTilemap.heightInTiles;
-		_tileHightligh.makeGraphic(cast _tileHightligh.width, cast _tileHightligh.height, 0xffff0000);
-		
-		_properties.refresh(_activeTilemap);
+		activeTilemap = 0;
+	}
+	
+	public function refresh():Void
+	{
+		if (activeTilemap >= 0)
+		{
+			var tilemap:FlxTilemap = tilemaps[activeTilemap];
+			
+			_tileHightligh.width = tilemap.width / tilemap.widthInTiles;
+			_tileHightligh.height = tilemap.height / tilemap.heightInTiles;
+			_tileHightligh.makeGraphic(cast _tileHightligh.width, cast _tileHightligh.height, 0xffff0000);
+			
+			_properties.refresh(tilemap);
+		}
 	}
 	
 	override public function update():Void 
@@ -79,8 +87,8 @@ class Tile extends Tool
 		
 		if (_brain.pointerPressed)
 		{
-			if (_activeTilemap != null)
-				var b :Bool = _activeTilemap.setTile(Std.int(_brain.flixelPointer.x / _tileHightligh.width), Std.int(_brain.flixelPointer.y / _tileHightligh.height), _brain.keyPressed(Keyboard.DELETE) ? 0 : _properties.getSelectedTileType());
+			if (activeTilemap >= 0)
+				var b :Bool = tilemaps[activeTilemap].setTile(Std.int(_brain.flixelPointer.x / _tileHightligh.width), Std.int(_brain.flixelPointer.y / _tileHightligh.height), _brain.keyPressed(Keyboard.DELETE) ? 0 : _properties.getSelectedTileType());
 		}
 	}
 	
@@ -131,7 +139,7 @@ class Tile extends Tool
 			FlxG.camera.buffer.draw(FlxSpriteUtil.flashGfxSprite);
 	}
 	
-	private function findExistingTilemaps(members:Array<FlxBasic>, tiles:FlxTypedGroup<FlxTilemap>):FlxTilemap
+	private function findExistingTilemaps(members:Array<FlxBasic>, tiles:Vector<FlxTilemap>):FlxTilemap
 	{
 		var i:Int = 0;
 		var size:Int = members.length;
@@ -154,12 +162,22 @@ class Tile extends Tool
 				}
 				if (target != null)
 				{
-					tiles.add(target);
+					tiles.push(target);
 				}
 			}
 		}
 		
 		return target;
+	}
+	
+	function set_activeTilemap(value:Int)
+	{
+		FlxG.log.add("value = " + value);
+		// TODO: check for out of bound values
+		activeTilemap = value;
+		refresh();
+		
+		return activeTilemap;
 	}
 }
 
@@ -307,16 +325,20 @@ class TilemapSelector extends Sprite
 	
 	public function refresh():Void
 	{
-		_text.text = "Text";
+		_text.text = "Tilemap" + _tileTool.activeTilemap;
 	}
 	
 	private function next():Void
 	{
 		FlxG.log.add("Next");
+		_tileTool.activeTilemap++; 
+		refresh();
 	}
 	
 	private function prev():Void
 	{
 		FlxG.log.add("Prev");
+		_tileTool.activeTilemap--; 
+		refresh();
 	}
 }

@@ -11,6 +11,7 @@ import flixel.FlxSprite;
 import flixel.group.FlxGroup;
 import flixel.math.FlxPoint;
 import flixel.system.debug.Window;
+import flixel.system.debug.interaction.tools.tile.TileSelectionWindow;
 import flixel.system.debug.interaction.tools.tile.TilemapWindow;
 import flixel.system.debug.interaction.tools.tile.TilePointer;
 import flixel.system.ui.FlxSystemButton;
@@ -37,6 +38,7 @@ class Tile extends Tool
 	public var activeTilemap(default, set):Int = -1;
 	public var tileHightligh(default, null):FlxSprite;
 	public var properties(default, null):TilemapWindow;
+	public var palette(default, null):TileSelectionWindow;
 	
 	override public function init(brain:Interaction):Tool 
 	{
@@ -44,9 +46,12 @@ class Tile extends Tool
 		
 		_name = "Tile";
 		properties = new TilemapWindow(this);
+		palette = new TileSelectionWindow(this);
+		
+		brain.container.addChild(properties);
+		brain.container.addChild(palette);
 		
 		brain.addTool(new TilePointer(this));
-		brain.container.addChild(properties);
 		
 		tileHightligh = new FlxSprite(); // TODO: replace this with a Sprite.
 		
@@ -70,7 +75,8 @@ class Tile extends Tool
 		tileHightligh.height = tilemap.height / tilemap.heightInTiles;
 		tileHightligh.makeGraphic(cast tileHightligh.width, cast tileHightligh.height, 0xffff0000);
 		
-		properties.refresh(tilemap);
+		properties.refresh();
+		palette.refresh(tilemap);
 	}
 			
 	override public function draw():Void 

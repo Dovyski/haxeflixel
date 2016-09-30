@@ -68,7 +68,7 @@ class TilePointer extends TileSubTool
 		if (_brain.pointerPressed)
 		{
 			if (_tileBrain.activeTilemap >= 0)
-				var b :Bool = _tileBrain.tilemaps[_tileBrain.activeTilemap].setTile(Std.int(_brain.flixelPointer.x / _tileBrain.tileHightligh.width), Std.int(_brain.flixelPointer.y / _tileBrain.tileHightligh.height), _brain.keyPressed(Keyboard.DELETE) ? 0 : _tileBrain.properties.getSelectedTileType());
+				var b :Bool = _tileBrain.tilemaps[_tileBrain.activeTilemap].setTile(Std.int(_brain.flixelPointer.x / _tileBrain.tileHightligh.width), Std.int(_brain.flixelPointer.y / _tileBrain.tileHightligh.height), _brain.keyPressed(Keyboard.DELETE) ? 0 : _tileBrain.palette.selectedTile);
 		}
 	}
 	

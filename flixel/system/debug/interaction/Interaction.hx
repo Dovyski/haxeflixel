@@ -157,7 +157,7 @@ class Interaction extends Window
 			_keysUp.set(event.keyCode, _turn);
 	}
 	
-	private function addTool(tool:Tool):Void
+	public function addTool(tool:Tool):Void
 	{
 		tool.init(this);
 		_tools.push(tool);

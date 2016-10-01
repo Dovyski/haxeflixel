@@ -43,13 +43,13 @@ class TileSelectionWindow extends Window
 	private function adjustComponentSizes(referenceTile:FlxSprite):Void
 	{	
 		_tileHightligh.graphics.clear();
-		_tileHightligh.graphics.lineStyle(1, 0xff0000);
+		_tileHightligh.graphics.lineStyle(1, 0xee0000);
 		_tileHightligh.graphics.drawRect(0, 0, referenceTile.width, referenceTile.height);
 		_tileHightligh.width = referenceTile.width * FlxG.scaleMode.scale.x;
 		_tileHightligh.height = referenceTile.height * FlxG.scaleMode.scale.y;
 		
 		_tileSelected.graphics.clear();
-		_tileSelected.graphics.lineStyle(1, 0xffff00);
+		_tileSelected.graphics.lineStyle(1, 0xff0000);
 		_tileSelected.graphics.drawRect(0, 0, referenceTile.width, referenceTile.height);
 		_tileSelected.width = referenceTile.width * FlxG.scaleMode.scale.x;
 		_tileSelected.height = referenceTile.height * FlxG.scaleMode.scale.y;

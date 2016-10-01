@@ -11,10 +11,10 @@ import flixel.FlxSprite;
 import flixel.group.FlxGroup;
 import flixel.math.FlxPoint;
 import flixel.system.debug.Window;
-import flixel.system.debug.interaction.tools.tile.Editor;
 import flixel.system.debug.interaction.tools.tile.TileSelectionWindow;
 import flixel.system.debug.interaction.tools.tile.TilemapWindow;
-import flixel.system.debug.interaction.tools.tile.TilePointer;
+import flixel.system.debug.interaction.tools.tile.Pointer;
+import flixel.system.debug.interaction.tools.tile.Editor;
 import flixel.system.ui.FlxSystemButton;
 import flixel.tile.FlxTilemap;
 import flixel.util.FlxSpriteUtil;
@@ -52,7 +52,7 @@ class Tile extends Tool
 		brain.container.addChild(properties);
 		brain.container.addChild(palette);
 		
-		brain.addTool(new TilePointer(this));
+		brain.addTool(new Pointer(this));
 		brain.addTool(new Editor(this));
 		
 		tileHightligh = new FlxSprite(); // TODO: replace this with a Sprite.

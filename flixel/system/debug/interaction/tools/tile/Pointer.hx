@@ -23,7 +23,7 @@ import flixel.system.debug.interaction.tools.Tile.GraphicTileTool;
  * 
  * @author Fernando Bevilacqua (dovyski@gmail.com)
  */
-class TilePointer extends TileSubTool
+class Pointer extends TileSubTool
 {		
 	public function new(tileTool:Tile) 
 	{
@@ -34,7 +34,7 @@ class TilePointer extends TileSubTool
 	{
 		super.init(brain);
 
-		_name = "Tile";
+		_name = "Tile pointer";
 		setButton(GraphicTileTool);
 		setCursor(new GraphicTileTool(0, 0));
 		

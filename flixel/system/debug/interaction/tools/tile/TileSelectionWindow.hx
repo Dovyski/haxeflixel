@@ -92,6 +92,7 @@ class TileSelectionWindow extends Window
 		
 		if (_tilemap != null)
 		{
+			resetSelectedTile();
 			adjustComponentSizes(_tileTool.tileHightligh);
 			
 			_tilemapBitmap.bitmapData = _tilemap.frames.parent.bitmap;
@@ -106,12 +107,7 @@ class TileSelectionWindow extends Window
 			_graphicTile.x = Math.floor(event.localX / _tileTool.tileHightligh.width) * _tileTool.tileHightligh.width;
 			_graphicTile.y = Math.floor(event.localY / _tileTool.tileHightligh.height) * _tileTool.tileHightligh.height;
 			
-			_tileHightligh.x = _graphicTile.x * FlxG.scaleMode.scale.x;
-			_tileHightligh.y = _graphicTile.y * FlxG.scaleMode.scale.y;
-			
-			_tileHightligh.x += _tilemapGraphic.x;
-			_tileHightligh.y += _tilemapGraphic.y;
-			_tileHightligh.visible = true;
+			updateHighlightedSelection();
 		}
 		else if (event.type == MouseEvent.MOUSE_OUT)
 		{
@@ -119,7 +115,34 @@ class TileSelectionWindow extends Window
 		}
 	}
 	
+	private function resetSelectedTile():Void
+	{
+		_graphicTile.x = 0;
+		_graphicTile.y = 0;
+		
+		updateHighlightedSelection();
+		
+		selectedTile = 0;
+		_tileSelected.x = _tileHightligh.x;
+		_tileSelected.y = _tileHightligh.y;
+	}
+	
+	private function updateHighlightedSelection():Void
+	{
+		_tileHightligh.x = _graphicTile.x * FlxG.scaleMode.scale.x;
+		_tileHightligh.y = _graphicTile.y * FlxG.scaleMode.scale.y;
+		
+		_tileHightligh.x += _tilemapGraphic.x;
+		_tileHightligh.y += _tilemapGraphic.y;
+		_tileHightligh.visible = true;
+	}
+	
 	private function handleClickGraphic(event:MouseEvent):Void
+	{
+		selectTileBasedOnHighlightedSelection();
+	}
+	
+	private function selectTileBasedOnHighlightedSelection():Void
 	{
 		var tilesPerRow:Int = Std.int(_tilemapBitmap.bitmapData.width / _tileTool.tileHightligh.width);
 		var row:Int = Std.int(_graphicTile.y / _tileTool.tileHightligh.height);

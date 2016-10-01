@@ -3,6 +3,7 @@ package flixel.system.debug.interaction.tools.tile;
 import flash.display.Bitmap;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
+import flixel.FlxSprite;
 import flixel.math.FlxPoint;
 import flixel.tile.FlxTilemap;
 import flixel.system.debug.Window;
@@ -39,6 +40,21 @@ class TileSelectionWindow extends Window
 		addChild(_tilemapGraphic);
 	}
 	
+	private function adjustComponentSizes(referenceTile:FlxSprite):Void
+	{	
+		_tileHightligh.graphics.clear();
+		_tileHightligh.graphics.lineStyle(1, 0xff0000);
+		_tileHightligh.graphics.drawRect(0, 0, referenceTile.width, referenceTile.height);
+		_tileHightligh.width = referenceTile.width * FlxG.scaleMode.scale.x;
+		_tileHightligh.height = referenceTile.height * FlxG.scaleMode.scale.y;
+		
+		_tileSelected.graphics.clear();
+		_tileSelected.graphics.lineStyle(1, 0xffff00);
+		_tileSelected.graphics.drawRect(0, 0, referenceTile.width, referenceTile.height);
+		_tileSelected.width = referenceTile.width * FlxG.scaleMode.scale.x;
+		_tileSelected.height = referenceTile.height * FlxG.scaleMode.scale.y;
+	}
+	
 	public function new(tileTool:Tile, x:Float, y:Float) 
 	{
 		super("Tile palette", new GraphicTileTool(0, 0), 200, 100);
@@ -47,21 +63,14 @@ class TileSelectionWindow extends Window
 		initLayout();
 		
 		_tileHightligh = new Sprite();
-		_tileHightligh.graphics.lineStyle(1, 0xff0000);
-		_tileHightligh.graphics.drawRect(0, 0, 16, 16);
-		_tileHightligh.width = 16; // TODO: get this value dynamically
-		_tileHightligh.height = 16; // TODO: get this value dynamically
-		_tileHightligh.x = 0;
-		_tileHightligh.y = 0;
+		_tileHightligh.x = _tilemapGraphic.x;
+		_tileHightligh.y = _tilemapGraphic.y;
 		_tileHightligh.visible = false;
 		
 		_tileSelected = new Sprite();
-		_tileSelected.graphics.lineStyle(1, 0xffff00);
-		_tileSelected.graphics.drawRect(0, 0, 16, 16);
-		_tileSelected.width = 16; // TODO: get this value dynamically
-		_tileSelected.height = 16; // TODO: get this value dynamically
-		_tileSelected.x = _tilemapGraphic.x; // TODO: get this value dynamically
-		_tileSelected.y = _tilemapGraphic.y; // TODO: get this value dynamically
+		_tileSelected.x = _tilemapGraphic.x;
+		_tileSelected.y = _tilemapGraphic.y;
+		_tileSelected.visible = true;
 		
 		_graphicTile = new FlxPoint();
 		
@@ -83,6 +92,8 @@ class TileSelectionWindow extends Window
 		
 		if (_tilemap != null)
 		{
+			adjustComponentSizes(_tileTool.tileHightligh);
+			
 			_tilemapBitmap.bitmapData = _tilemap.frames.parent.bitmap;
 			resize(_tilemapBitmap.bitmapData.width * 2 + 5, _tilemapBitmap.bitmapData.height * 2 + _tilemapGraphic.y + 5);
 		}
@@ -92,13 +103,14 @@ class TileSelectionWindow extends Window
 	{		
 		if (event.type == MouseEvent.MOUSE_MOVE)
 		{
-			_graphicTile.x = Math.floor(event.localX / 8) * 8;
-			_graphicTile.y = Math.floor(event.localY / 8) * 8;
+			_graphicTile.x = Math.floor(event.localX / _tileTool.tileHightligh.width) * _tileTool.tileHightligh.width;
+			_graphicTile.y = Math.floor(event.localY / _tileTool.tileHightligh.height) * _tileTool.tileHightligh.height;
 			
-			_tileHightligh.x = _graphicTile.x * 2;
-			_tileHightligh.y = _graphicTile.y * 2;
+			_tileHightligh.x = _graphicTile.x * FlxG.scaleMode.scale.x;
+			_tileHightligh.y = _graphicTile.y * FlxG.scaleMode.scale.y;
 			
-			_tileHightligh.y += 20;
+			_tileHightligh.x += _tilemapGraphic.x;
+			_tileHightligh.y += _tilemapGraphic.y;
 			_tileHightligh.visible = true;
 		}
 		else if (event.type == MouseEvent.MOUSE_OUT)
@@ -109,9 +121,9 @@ class TileSelectionWindow extends Window
 	
 	private function handleClickGraphic(event:MouseEvent):Void
 	{
-		var tilesPerRow:Int = Std.int(_tilemapBitmap.bitmapData.width / 8);
-		var row:Int = Std.int(_graphicTile.y / 8);
-		var column:Int = Std.int(_graphicTile.x / 8);
+		var tilesPerRow:Int = Std.int(_tilemapBitmap.bitmapData.width / _tileTool.tileHightligh.width);
+		var row:Int = Std.int(_graphicTile.y / _tileTool.tileHightligh.height);
+		var column:Int = Std.int(_graphicTile.x / _tileTool.tileHightligh.width);
 		var index = row * tilesPerRow + column;
 		
 		selectedTile = index;

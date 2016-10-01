@@ -23,14 +23,14 @@ class TilemapSelector extends Sprite
 	{
 		super();
 		_tileTool = tileTool;
-		_text = DebuggerUtil.createTextField(2, -2);
+		_text = DebuggerUtil.createTextField(2, -3);
 
 		_prev = new FlxSystemButton(Type.createInstance(GraphicArrowLeft, [0, 0]), prev);
 		_next = new FlxSystemButton(Type.createInstance(GraphicArrowRight, [0, 0]), next);
 		
 		_prev.x = 0;
 		_text.x = _prev.x + _prev.width + 5;
-		_next.x = _text.x + 80;
+		_next.x = _text.x + 70;
 		
 		addChild(_prev);
 		addChild(_text);

@@ -2,6 +2,8 @@ package flixel.system.debug.interaction.tools.tile;
 
 import flash.display.Sprite;
 import flash.text.TextField;
+import flixel.system.debug.FlxDebugger.GraphicArrowLeft;
+import flixel.system.debug.FlxDebugger.GraphicArrowRight;
 import flixel.system.ui.FlxSystemButton;
 import flixel.system.debug.interaction.tools.Tile.GraphicTileTool;
 
@@ -14,20 +16,21 @@ class TilemapSelector extends Sprite
 {
 	private var _prev:FlxSystemButton;
 	private var _next:FlxSystemButton;
-	private var _text:TextField = new TextField();
+	private var _text:TextField;
 	private var _tileTool:Tile;
 		
 	public function new(tileTool:Tile) 
 	{
 		super();
 		_tileTool = tileTool;
+		_text = DebuggerUtil.createTextField(2, -2);
 
-		_prev = new FlxSystemButton(Type.createInstance(GraphicTileTool, [0, 0]), prev);
-		_next = new FlxSystemButton(Type.createInstance(GraphicTileTool, [0, 0]), next);
+		_prev = new FlxSystemButton(Type.createInstance(GraphicArrowLeft, [0, 0]), prev);
+		_next = new FlxSystemButton(Type.createInstance(GraphicArrowRight, [0, 0]), next);
 		
 		_prev.x = 0;
-		_text.x = _prev.x + _prev.width + 2;
-		_next.x = _text.x + _text.width + 2;
+		_text.x = _prev.x + _prev.width + 5;
+		_next.x = _text.x + 80;
 		
 		addChild(_prev);
 		addChild(_text);
@@ -38,19 +41,21 @@ class TilemapSelector extends Sprite
 	
 	public function refresh():Void
 	{
-		_text.text = "Tilemap" + _tileTool.activeTilemap;
+		// TODO: replace this with tilemap name? Is there any API for that?
+		_text.text = "tilemap_" + _tileTool.activeTilemap;
+		
+		_prev.visible = _tileTool.activeTilemap > 0;
+		_next.visible = _tileTool.activeTilemap < _tileTool.tilemaps.length - 1;
 	}
 	
 	private function next():Void
 	{
-		FlxG.log.add("Next");
 		_tileTool.activeTilemap++; 
 		refresh();
 	}
 	
 	private function prev():Void
 	{
-		FlxG.log.add("Prev");
 		_tileTool.activeTilemap--; 
 		refresh();
 	}

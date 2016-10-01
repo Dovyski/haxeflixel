@@ -36,7 +36,7 @@ class GraphicTileTool extends BitmapData {}
 class Tile extends Tool
 {		
 	public var tilemaps(default, null):Vector<FlxTilemap> = new Vector<FlxTilemap>();
-	public var activeTilemap(default, set):Int = -1;
+	public var activeTilemap(default, set):Int = 0;
 	public var tileHightligh(default, null):FlxSprite;
 	public var properties(default, null):TilemapWindow;
 	public var palette(default, null):TileSelectionWindow;
@@ -62,11 +62,7 @@ class Tile extends Tool
 	public function refresh():Void
 	{
 		var tilemap:FlxTilemap = null;
-		
-		if(activeTilemap == -1) {
-			activeTilemap = 0;
-		}
-		
+				
 		tilemaps.length = 0;
 		findExistingTilemaps(FlxG.state.members, tilemaps);
 		

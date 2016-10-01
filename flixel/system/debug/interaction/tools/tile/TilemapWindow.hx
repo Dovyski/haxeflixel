@@ -34,7 +34,7 @@ class TilemapWindow extends Window
 	
 	public function new(tileTool:Tile, x:Float, y:Float) 
 	{
-		super("Tilemap", new GraphicTileTool(0, 0), 160, 90);
+		super("Tilemap", null, 160, 90);
 		_tileTool = tileTool;
 		
 		initLayout();
@@ -56,6 +56,8 @@ class TilemapWindow extends Window
 			_info.text = "Size (px):         " + activeTilemap.width + " x " + activeTilemap.height + "\n";
 			_info.text += "Size (in tiles):    " + activeTilemap.widthInTiles + " x " + activeTilemap.heightInTiles + "\n";
 			_info.text += "Tile size (px):      " + tileWidth + " x " + tileHeight;	
+			
+			_tilemapSelector.refresh();
 		}
 	}
 }

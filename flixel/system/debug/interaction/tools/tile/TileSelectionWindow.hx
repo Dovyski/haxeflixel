@@ -39,7 +39,7 @@ class TileSelectionWindow extends Window
 		addChild(_tilemapGraphic);
 	}
 	
-	public function new(tileTool:Tile) 
+	public function new(tileTool:Tile, x:Float, y:Float) 
 	{
 		super("Tile palette", new GraphicTileTool(0, 0), 200, 100);
 		_tileTool = tileTool;
@@ -60,15 +60,15 @@ class TileSelectionWindow extends Window
 		_tileSelected.graphics.drawRect(0, 0, 16, 16);
 		_tileSelected.width = 16; // TODO: get this value dynamically
 		_tileSelected.height = 16; // TODO: get this value dynamically
-		_tileSelected.x = 0; // TODO: get this value dynamically
-		_tileSelected.y = 35; // TODO: get this value dynamically
+		_tileSelected.x = _tilemapGraphic.x; // TODO: get this value dynamically
+		_tileSelected.y = _tilemapGraphic.y; // TODO: get this value dynamically
 		
 		_graphicTile = new FlxPoint();
 		
 		addChild(_tileSelected);
 		addChild(_tileHightligh);
 		
-		reposition(2, 150);
+		reposition(x, y);
 		
 		_tilemapGraphic.addEventListener(MouseEvent.MOUSE_MOVE, handleMouseOverGraphic);
 		_tilemapGraphic.addEventListener(MouseEvent.MOUSE_UP, handleClickGraphic);
@@ -84,7 +84,7 @@ class TileSelectionWindow extends Window
 		if (_tilemap != null)
 		{
 			_tilemapBitmap.bitmapData = _tilemap.frames.parent.bitmap;
-			resize(_tilemapBitmap.bitmapData.width * 2 + 10, _tilemapBitmap.bitmapData.height * 2 + _tilemapGraphic.y + 10);
+			resize(_tilemapBitmap.bitmapData.width * 2 + 5, _tilemapBitmap.bitmapData.height * 2 + _tilemapGraphic.y + 5);
 		}
 	}
 	

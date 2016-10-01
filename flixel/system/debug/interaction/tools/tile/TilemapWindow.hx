@@ -3,43 +3,59 @@ package flixel.system.debug.interaction.tools.tile;
 import flash.display.Bitmap;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
+import flash.text.TextField;
 import flixel.math.FlxPoint;
 import flixel.tile.FlxTilemap;
 import flixel.system.debug.Window;
 import flixel.system.debug.interaction.tools.Tile.GraphicTileTool;
 
 /**
- * Window displayed when the user clicks any tile tool. It contains
- * information regarding the tilemaps available on the screen, e.g.
- * width, height, etc.
+ * Displays information regarding available tilemaps as well as info
+ * regarding the currently selected tilemap.
  * 
  * @author Fernando Bevilacqua (dovyski@gmail.com)
  */
 class TilemapWindow extends Window
 {
 	private var _tileTool:Tile;
-	private var _tilemap:FlxTilemap;
-	private var _graphicTile:FlxPoint;
 	private var _tilemapSelector:TilemapSelector;
+	private var _info:TextField;
 	
 	private function initLayout():Void
 	{
 		_tilemapSelector = new TilemapSelector(_tileTool);
 		_tilemapSelector.y = 20;
+		
+		_info = DebuggerUtil.createTextField(2, _tilemapSelector.y + 20);
 
 		addChild(_tilemapSelector);
+		addChild(_info);
 	}
 	
-	public function new(tileTool:Tile) 
+	public function new(tileTool:Tile, x:Float, y:Float) 
 	{
-		super("Tilemap", new GraphicTileTool(0, 0), 200, 100);
+		super("Tilemap", new GraphicTileTool(0, 0), 160, 90);
 		_tileTool = tileTool;
 		
 		initLayout();
-		reposition(2, 100);
+		reposition(x, y);
 		
 		visible = false;
 	}
 	
-	public function refresh():Void {}
+	public function refresh(activeTilemap:FlxTilemap):Void
+	{
+		if (activeTilemap == null)
+			_info.text = "No tilemap is available.";
+		else
+		{
+			var tileWidth:Int = cast activeTilemap.width / activeTilemap.widthInTiles;
+			var tileHeight:Int = cast activeTilemap.height / activeTilemap.heightInTiles;
+			
+			// TODO: add some love to this layout
+			_info.text = "Size (px):         " + activeTilemap.width + " x " + activeTilemap.height + "\n";
+			_info.text += "Size (in tiles):    " + activeTilemap.widthInTiles + " x " + activeTilemap.heightInTiles + "\n";
+			_info.text += "Tile size (px):      " + tileWidth + " x " + tileHeight;	
+		}
+	}
 }

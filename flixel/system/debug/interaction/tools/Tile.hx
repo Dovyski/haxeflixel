@@ -46,13 +46,12 @@ class Tile extends Tool
 		super.init(brain);
 		
 		_name = "Tile";
-		properties = new TilemapWindow(this);
-		palette = new TileSelectionWindow(this);
+		properties = new TilemapWindow(this, 2, 150);
+		palette = new TileSelectionWindow(this, properties.x, 250);
 		
 		brain.container.addChild(properties);
 		brain.container.addChild(palette);
 		
-		brain.addTool(new Pointer(this));
 		brain.addTool(new Editor(this));
 		
 		tileHightligh = new FlxSprite(); // TODO: replace this with a Sprite.
@@ -62,7 +61,7 @@ class Tile extends Tool
 	
 	public function refresh():Void
 	{
-		var tilemap:FlxTilemap;
+		var tilemap:FlxTilemap = null;
 		
 		if(activeTilemap == -1) {
 			activeTilemap = 0;
@@ -71,13 +70,16 @@ class Tile extends Tool
 		tilemaps.length = 0;
 		findExistingTilemaps(FlxG.state.members, tilemaps);
 		
-		tilemap = tilemaps[activeTilemap];
+		if (tilemaps.length > 0)
+		{
+			tilemap = tilemaps[activeTilemap];
 		
-		tileHightligh.width = tilemap.width / tilemap.widthInTiles;
-		tileHightligh.height = tilemap.height / tilemap.heightInTiles;
-		tileHightligh.makeGraphic(cast tileHightligh.width, cast tileHightligh.height, 0xffff0000);
+			tileHightligh.width = tilemap.width / tilemap.widthInTiles;
+			tileHightligh.height = tilemap.height / tilemap.heightInTiles;
+			tileHightligh.makeGraphic(cast tileHightligh.width, cast tileHightligh.height, 0xffff0000);
+		}
 		
-		properties.refresh();
+		properties.refresh(tilemap);
 		palette.refresh(tilemap);
 	}
 	

@@ -11,6 +11,7 @@ import flixel.FlxSprite;
 import flixel.group.FlxGroup;
 import flixel.math.FlxPoint;
 import flixel.system.debug.Window;
+import flixel.system.debug.interaction.tools.tile.Editor;
 import flixel.system.debug.interaction.tools.tile.TileSelectionWindow;
 import flixel.system.debug.interaction.tools.tile.TilemapWindow;
 import flixel.system.debug.interaction.tools.tile.TilePointer;
@@ -52,6 +53,7 @@ class Tile extends Tool
 		brain.container.addChild(palette);
 		
 		brain.addTool(new TilePointer(this));
+		brain.addTool(new Editor(this));
 		
 		tileHightligh = new FlxSprite(); // TODO: replace this with a Sprite.
 		
@@ -78,33 +80,20 @@ class Tile extends Tool
 		properties.refresh();
 		palette.refresh(tilemap);
 	}
+	
+	override public function update():Void 
+	{
+		super.update();
+		
+		tileHightligh.x = Math.floor(_brain.flixelPointer.x / tileHightligh.width) * tileHightligh.width;
+		tileHightligh.y = Math.floor(_brain.flixelPointer.y / tileHightligh.height) * tileHightligh.height;
+	}
 			
 	override public function draw():Void 
 	{
 		// If the tool is not active, do nothing.
 		if (!isActive())
 			return;
-		
-		tileHightligh.drawDebug();
-	}
-	
-	// TODO: replace FlxSprite with rect probably
-	private function drawTileOutline(sprite:FlxSprite):Void
-	{
-		var gfx:Graphics = _brain.getDebugGraphics();
-		
-		if (gfx == null)
-			return;
-		
-		// Render a red rectangle centered at the selected item
-		gfx.lineStyle(0.7, 0x990000, 0.15);
-		gfx.drawRect(sprite.x - FlxG.camera.scroll.x,
-			sprite.y - FlxG.camera.scroll.y,
-			sprite.width * 1.0, sprite.height * 1.0);
-		
-		// Draw the debug info to the main camera buffer.
-		if (FlxG.renderBlit)
-			FlxG.camera.buffer.draw(FlxSpriteUtil.flashGfxSprite);
 	}
 	
 	private function findExistingTilemaps(members:Array<FlxBasic>, tiles:Vector<FlxTilemap>):FlxTilemap
@@ -140,7 +129,6 @@ class Tile extends Tool
 	
 	function set_activeTilemap(value:Int)
 	{
-		FlxG.log.add("value = " + value);
 		// TODO: check for out of bound values
 		activeTilemap = value;
 		refresh();
